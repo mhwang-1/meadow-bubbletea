@@ -1,0 +1,12 @@
+services:
+  meadow:
+    build: .
+    ports:
+      - "127.0.0.1:34135:34135"
+    environment:
+      - DATA=/data
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
