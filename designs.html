@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meadow TUI — 10 Design Proposals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700&family=Inconsolata:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'DM Sans', sans-serif;
+    padding: 60px 40px 120px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #f5f5f5 0%, #aaa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 80px;
+    font-weight: 400;
+  }
+
+  .design-card {
+    max-width: 960px;
+    margin: 0 auto 100px;
+    position: relative;
+  }
+
+  .design-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    position: absolute;
+    top: -40px;
+    left: -20px;
+    z-index: 0;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .design-header {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px;
+    padding-left: 50px;
+  }
+
+  .design-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f0f0f0;
+    margin-bottom: 4px;
+  }
+
+  .design-desc {
+    font-size: 0.95rem;
+    color: #777;
+    line-height: 1.5;
+    max-width: 600px;
+  }
+
+  .design-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #333;
+    color: #999;
+    font-weight: 500;
+  }
+
+  .terminal {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 1;
+  }
+
+  .terminal-bar {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .terminal-title {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .terminal-body {
+    padding: 24px 28px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    overflow-x: auto;
+    min-height: 420px;
+  }
+
+  /* ─── Design 1: Ink & Paper ─── */
+  #d1 .terminal-bar { background: #2C2520; }
+  #d1 .terminal-dot:nth-child(1) { background: #C2410C; }
+  #d1 .terminal-dot:nth-child(2) { background: #D4A574; }
+  #d1 .terminal-dot:nth-child(3) { background: #8B7355; }
+  #d1 .terminal-body {
+    background: #FFFBF5;
+    color: #1C1917;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+  }
+  #d1 .dim { color: #A8A29E; }
+  #d1 .accent { color: #C2410C; font-weight: 600; }
+  #d1 .done { color: #78716C; text-decoration: line-through; }
+  #d1 .rule { color: #D6D3D1; }
+  #d1 .border-left { border-left: 3px solid #E7E5E4; padding-left: 16px; }
+  #d1 .border-left.active { border-left-color: #C2410C; }
+  #d1 .header-line { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  #d1 .mode-pill { color: #A8A29E; padding: 0 2px; }
+  #d1 .mode-pill.active { color: #1C1917; border-bottom: 2px solid #C2410C; font-weight: 600; }
+  #d1 .sep { display: block; height: 1px; background: #E7E5E4; margin: 16px 0; }
+
+  /* ─── Design 2: Solarised Garden ─── */
+  #d2 .terminal-bar { background: #D5C8A1; }
+  #d2 .terminal-dot:nth-child(1) { background: #DC322F; }
+  #d2 .terminal-dot:nth-child(2) { background: #B58900; }
+  #d2 .terminal-dot:nth-child(3) { background: #859900; }
+  #d2 .terminal-body {
+    background: #FDF6E3;
+    color: #657B83;
+    font-family: 'Fira Code', monospace;
+    font-weight: 400;
+  }
+  #d2 .base { color: #586E75; }
+  #d2 .yellow { color: #B58900; font-weight: 600; }
+  #d2 .green { color: #859900; }
+  #d2 .blue { color: #268BD2; }
+  #d2 .magenta { color: #D33682; }
+  #d2 .box {
+    border: 1px solid #D3CBB7;
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin: 4px 0;
+  }
+  #d2 .progress-bar { display: inline-block; }
+  #d2 .progress-fill { color: #B58900; }
+  #d2 .progress-empty { color: #EEE8D5; }
+  #d2 .dots { color: #D3CBB7; }
+
+  /* ─── Design 3: Kanban Cards ─── */
+  #d3 .terminal-bar { background: #1E1E2E; }
+  #d3 .terminal-dot:nth-child(1) { background: #F38BA8; }
+  #d3 .terminal-dot:nth-child(2) { background: #F9E2AF; }
+  #d3 .terminal-dot:nth-child(3) { background: #A6E3A1; }
+  #d3 .terminal-body {
+    background: #F5F5F7;
+    color: #1E1E2E;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #d3 .cards { display: flex; gap: 14px; flex-wrap: wrap; }
+  #d3 .card {
+    background: #FFFFFF;
+    border: 1px solid #E4E4E7;
+    border-radius: 10px;
+    padding: 16px;
+    flex: 1;
+    min-width: 240px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  #d3 .card.active { border-left: 3px solid #7C3AED; }
+  #d3 .card-title { font-weight: 600; font-size: 13px; margin-bottom: 12px; display: flex; justify-content: space-between; }
+  #d3 .badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+  #d3 .badge-active { background: #EDE9FE; color: #7C3AED; }
+  #d3 .badge-empty { background: #F1F5F9; color: #94A3B8; }
+  #d3 .task-item { padding: 4px 0; font-size: 12.5px; display: flex; align-items: center; gap: 8px; }
+  #d3 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  #d3 .dot-current { background: #7C3AED; }
+  #d3 .dot-pending { background: #D4D4D8; }
+  #d3 .dot-done { background: #22C55E; }
+  #d3 .card-progress { margin-top: 12px; height: 4px; background: #F1F5F9; border-radius: 2px; overflow: hidden; }
+  #d3 .card-progress-fill { height: 100%; background: #7C3AED; border-radius: 2px; }
+  #d3 .card-footer { margin-top: 8px; font-size: 11px; color: #A1A1AA; display: flex; justify-content: space-between; }
+
+  /* ─── Design 4: Brutalist ─── */
+  #d4 .terminal-bar { background: #000; }
+  #d4 .terminal-dot:nth-child(1) { background: #FF0000; }
+  #d4 .terminal-dot:nth-child(2) { background: #FFFF00; }
+  #d4 .terminal-dot:nth-child(3) { background: #00FF00; }
+  #d4 .terminal-body {
+    background: #FFFFFF;
+    color: #000000;
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    font-size: 13px;
+    border: 3px solid #000;
+  }
+  #d4 .block-header {
+    background: #000;
+    color: #FFF;
+    padding: 6px 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    margin: -24px -28px 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  #d4 .time-block { margin: 16px 0; padding: 12px; border: 2px solid #000; }
+  #d4 .time-block.selected { background: #FFFF00; }
+  #d4 .time-block-header { font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+  #d4 .task-row { padding: 3px 0; font-size: 12.5px; }
+  #d4 .marker { font-weight: 700; margin-right: 8px; }
+  #d4 .marker-done { color: #000; }
+  #d4 .marker-active { color: #FF0000; }
+  #d4 .marker-pending { color: #999; }
+  #d4 .strike { text-decoration: line-through; color: #999; }
+  #d4 .red { color: #FF0000; font-weight: 700; }
+  #d4 .footer-bar {
+    background: #000;
+    color: #FFF;
+    padding: 6px 12px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin: 20px -28px -24px;
+  }
+
+  /* ─── Design 5: Meadow Green ─── */
+  #d5 .terminal-bar { background: #1B3A2D; }
+  #d5 .terminal-dot:nth-child(1) { background: #E57373; }
+  #d5 .terminal-dot:nth-child(2) { background: #FFD54F; }
+  #d5 .terminal-dot:nth-child(3) { background: #81C784; }
+  #d5 .terminal-body {
+    background: #F1F8E9;
+    color: #33691E;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+  }
+  #d5 .header-bar {
+    background: #2E7D32;
+    color: #E8F5E9;
+    padding: 10px 16px;
+    margin: -24px -28px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    border-radius: 0;
+  }
+  #d5 .pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  #d5 .pill-active { background: #C8E6C9; color: #1B5E20; }
+  #d5 .pill-inactive { color: #A5D6A7; }
+  #d5 .timebox { margin: 12px 0; padding: 12px 16px; background: #FFFFFF; border-radius: 8px; border-left: 4px solid #66BB6A; }
+  #d5 .timebox.unassigned { border-left-color: #AED581; opacity: 0.7; }
+  #d5 .timebox-header { font-weight: 600; color: #2E7D32; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  #d5 .task { padding: 3px 0; color: #558B2F; font-size: 12.5px; }
+  #d5 .task-done { color: #81C784; }
+  #d5 .task-active { color: #2E7D32; font-weight: 600; }
+  #d5 .icon { margin-right: 6px; }
+  #d5 .progress { display: inline-block; background: #C8E6C9; border-radius: 3px; height: 6px; width: 100px; position: relative; overflow: hidden; vertical-align: middle; }
+  #d5 .progress-inner { background: #43A047; height: 100%; border-radius: 3px; }
+  #d5 .footer { color: #7CB342; font-size: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #C8E6C9; }
+
+  /* ─── Design 6: Blueprint ─── */
+  #d6 .terminal-bar { background: #0D1B3E; }
+  #d6 .terminal-dot:nth-child(1) { background: #FF6B6B; }
+  #d6 .terminal-dot:nth-child(2) { background: #FFA94D; }
+  #d6 .terminal-dot:nth-child(3) { background: #69DB7C; }
+  #d6 .terminal-body {
+    background: #EBF2FA;
+    color: #1A365D;
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 400;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.06) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  #d6 .blueprint-header {
+    border-bottom: 2px solid #3B82F6;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  #d6 .blueprint-title { color: #1E40AF; font-weight: 700; font-size: 15px; }
+  #d6 .blueprint-date { color: #60A5FA; font-size: 12px; }
+  #d6 .mode-tabs { display: flex; gap: 0; margin-bottom: 20px; }
+  #d6 .mode-tab { padding: 5px 14px; font-size: 11px; font-weight: 600; border: 1px solid #93C5FD; color: #60A5FA; }
+  #d6 .mode-tab:first-child { border-radius: 4px 0 0 4px; }
+  #d6 .mode-tab:last-child { border-radius: 0 4px 4px 0; }
+  #d6 .mode-tab.active { background: #3B82F6; color: #FFF; border-color: #3B82F6; }
+  #d6 .timeline { position: relative; padding-left: 24px; }
+  #d6 .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #93C5FD; }
+  #d6 .time-node { position: relative; margin-bottom: 20px; }
+  #d6 .time-dot { position: absolute; left: -20px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #3B82F6; border: 2px solid #EBF2FA; }
+  #d6 .time-dot.empty { background: #93C5FD; }
+  #d6 .time-label { color: #60A5FA; font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+  #d6 .node-content { background: rgba(255,255,255,0.7); border: 1px solid #BFDBFE; border-radius: 6px; padding: 10px 14px; }
+  #d6 .node-title { font-weight: 600; color: #1E40AF; font-size: 13px; margin-bottom: 6px; }
+  #d6 .node-task { font-size: 12px; padding: 2px 0; color: #334155; }
+  #d6 .node-task .check { color: #3B82F6; font-weight: 700; }
+
+  /* ─── Design 7: Sunset Warm ─── */
+  #d7 .terminal-bar { background: #3D1C00; }
+  #d7 .terminal-dot:nth-child(1) { background: #FF6B35; }
+  #d7 .terminal-dot:nth-child(2) { background: #F7C948; }
+  #d7 .terminal-dot:nth-child(3) { background: #70B77E; }
+  #d7 .terminal-body {
+    background: linear-gradient(180deg, #FFF8F0 0%, #FFF1E6 100%);
+    color: #3D1C00;
+    font-family: 'Inconsolata', monospace;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  #d7 .sunset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  #d7 .app-name { font-weight: 700; font-size: 16px; color: #9A3412; letter-spacing: -0.5px; }
+  #d7 .app-name span { color: #F97316; }
+  #d7 .nav-pills { display: flex; gap: 4px; }
+  #d7 .nav-pill { padding: 4px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 600; color: #C2410C; }
+  #d7 .nav-pill.active { background: #F97316; color: #FFF; }
+  #d7 .day-title { font-size: 13px; color: #9A3412; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  #d7 .day-title .line { flex: 1; height: 1px; background: #FDBA74; }
+  #d7 .tb { margin: 12px 0; padding: 10px 0; border-bottom: 1px dashed #FED7AA; }
+  #d7 .tb-header { display: flex; justify-content: space-between; font-weight: 600; color: #9A3412; font-size: 13px; margin-bottom: 6px; }
+  #d7 .tb-time { color: #EA580C; font-weight: 700; }
+  #d7 .tb-task { padding: 3px 0 3px 16px; font-size: 13px; color: #78350F; }
+  #d7 .tb-task.done { color: #A3A3A3; text-decoration: line-through; }
+  #d7 .tb-task.current { color: #EA580C; font-weight: 600; }
+  #d7 .tb-marker { display: inline-block; width: 16px; text-align: center; margin-right: 6px; }
+  #d7 .tb-break { color: #D4A574; font-style: italic; padding-left: 16px; font-size: 12.5px; }
+  #d7 .help-row { margin-top: 20px; color: #C2946A; font-size: 11.5px; }
+
+  /* ─── Design 8: Monochrome Zen ─── */
+  #d8 .terminal-bar { background: #222; }
+  #d8 .terminal-dot:nth-child(1) { background: #666; }
+  #d8 .terminal-dot:nth-child(2) { background: #888; }
+  #d8 .terminal-dot:nth-child(3) { background: #AAA; }
+  #d8 .terminal-body {
+    background: #FAFAFA;
+    color: #222;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+  #d8 .zen-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+  }
+  #d8 .zen-title { font-weight: 600; font-size: 13px; letter-spacing: 6px; text-transform: uppercase; color: #333; margin-bottom: 8px; }
+  #d8 .zen-date { color: #999; font-size: 12px; font-weight: 300; }
+  #d8 .zen-modes { display: flex; justify-content: center; gap: 24px; margin-top: 12px; font-size: 11px; }
+  #d8 .zen-mode { color: #BBB; font-weight: 400; }
+  #d8 .zen-mode.active { color: #222; font-weight: 600; }
+  #d8 .zen-block { margin: 24px 0; }
+  #d8 .zen-time { color: #BBB; font-size: 11px; font-weight: 400; letter-spacing: 2px; margin-bottom: 8px; }
+  #d8 .zen-timebox { padding: 12px 0 12px 20px; border-left: 1px solid #DDD; }
+  #d8 .zen-timebox.active { border-left-color: #222; }
+  #d8 .zen-tb-title { font-weight: 500; margin-bottom: 8px; color: #333; }
+  #d8 .zen-task { padding: 4px 0; color: #666; font-weight: 300; }
+  #d8 .zen-task.active { color: #222; font-weight: 500; }
+  #d8 .zen-task.done { color: #CCC; }
+  #d8 .zen-marker { margin-right: 8px; }
+  #d8 .zen-footer { text-align: center; color: #CCC; font-size: 11px; margin-top: 32px; letter-spacing: 1px; }
+
+  /* ─── Design 9: Retro Terminal ─── */
+  #d9 .terminal-bar { background: #1A1A2E; }
+  #d9 .terminal-dot:nth-child(1) { background: #E94560; }
+  #d9 .terminal-dot:nth-child(2) { background: #F5A623; }
+  #d9 .terminal-dot:nth-child(3) { background: #0F3460; }
+  #d9 .terminal-body {
+    background: #FFFFF0;
+    color: #2D2D2D;
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 400;
+    position: relative;
+    overflow: hidden;
+  }
+  #d9 .terminal-body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.015) 2px,
+      rgba(0,0,0,0.015) 4px
+    );
+    pointer-events: none;
+  }
+  #d9 .prompt { color: #E94560; font-weight: 700; }
+  #d9 .retro-header { margin-bottom: 20px; }
+  #d9 .retro-ascii { color: #0F3460; font-size: 11px; line-height: 1.2; margin-bottom: 12px; font-weight: 700; }
+  #d9 .retro-info { color: #888; font-size: 12px; margin-bottom: 4px; }
+  #d9 .retro-sep { color: #DDD; margin: 12px 0; }
+  #d9 .retro-section { margin: 8px 0; font-size: 13px; }
+  #d9 .retro-section-title { color: #0F3460; font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px; }
+  #d9 .retro-row { padding: 2px 0; }
+  #d9 .retro-time { color: #E94560; font-weight: 600; }
+  #d9 .retro-name { color: #2D2D2D; }
+  #d9 .retro-done { color: #4CAF50; }
+  #d9 .retro-pending { color: #BBB; }
+  #d9 .retro-current { color: #E94560; font-weight: 600; }
+  #d9 .retro-bar { display: inline-block; font-size: 12px; }
+  #d9 .retro-cursor { display: inline-block; background: #2D2D2D; color: #FFFFF0; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ─── Design 10: Lavender Haze ─── */
+  #d10 .terminal-bar { background: #2D1B69; }
+  #d10 .terminal-dot:nth-child(1) { background: #FF6B9D; }
+  #d10 .terminal-dot:nth-child(2) { background: #C084FC; }
+  #d10 .terminal-dot:nth-child(3) { background: #67E8F9; }
+  #d10 .terminal-body {
+    background: linear-gradient(135deg, #FAF5FF 0%, #F0EBFF 50%, #FDF2F8 100%);
+    color: #3B0764;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+  }
+  #d10 .lav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #E9D5FF;
+  }
+  #d10 .lav-logo { font-weight: 700; font-size: 15px; color: #7C3AED; }
+  #d10 .lav-logo span { color: #C084FC; font-weight: 400; }
+  #d10 .lav-pills { display: flex; gap: 4px; }
+  #d10 .lav-pill { padding: 3px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #A78BFA; }
+  #d10 .lav-pill.active { background: #7C3AED; color: #FFF; }
+  #d10 .lav-date { color: #A78BFA; font-size: 12px; }
+  #d10 .lav-section { margin: 16px 0; }
+  #d10 .lav-time-marker { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  #d10 .lav-time-text { color: #A78BFA; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  #d10 .lav-time-line { flex: 1; height: 1px; background: linear-gradient(90deg, #DDD6FE, transparent); }
+  #d10 .lav-box {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid #E9D5FF;
+    border-radius: 10px;
+    padding: 14px 18px;
+    backdrop-filter: blur(4px);
+    margin-bottom: 8px;
+  }
+  #d10 .lav-box.active { border-color: #A78BFA; box-shadow: 0 0 0 1px #C4B5FD; }
+  #d10 .lav-box-title { font-weight: 600; color: #6D28D9; margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 13px; }
+  #d10 .lav-task { padding: 3px 0; font-size: 12.5px; display: flex; align-items: center; gap: 8px; color: #581C87; }
+  #d10 .lav-task.done { color: #C4B5FD; }
+  #d10 .lav-task.current { color: #7C3AED; font-weight: 600; }
+  #d10 .lav-marker { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  #d10 .lav-marker-done { background: #C4B5FD; }
+  #d10 .lav-marker-current { background: #7C3AED; box-shadow: 0 0 6px rgba(124,58,237,0.4); }
+  #d10 .lav-marker-pending { background: #DDD6FE; }
+  #d10 .lav-progress { margin-top: 10px; height: 3px; background: #F3E8FF; border-radius: 2px; overflow: hidden; }
+  #d10 .lav-progress-fill { height: 100%; background: linear-gradient(90deg, #A78BFA, #7C3AED); border-radius: 2px; }
+  #d10 .lav-footer { color: #C4B5FD; font-size: 11px; margin-top: 20px; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>Meadow TUI Redesign</h1>
+<p class="subtitle">10 design proposals for a timebox-first task manager</p>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 1 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d1">
+  <div class="design-number">01</div>
+  <div class="design-header">
+    <div class="design-title">Ink & Paper</div>
+    <div class="design-desc">Editorial minimalism. One accent colour, heavy whitespace, margin rules like a legal pad. Strips away everything but the essentials.</div>
+    <div class="design-tags">
+      <span class="tag">minimal</span>
+      <span class="tag">warm white</span>
+      <span class="tag">single accent</span>
+      <span class="tag">editorial</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">meadow — ~/tasks</div>
+    </div>
+    <div class="terminal-body">
+      <div class="header-line">
+        <span style="font-weight:600; color:#1C1917">Meadow</span>
+        <span>
+          <span class="mode-pill active">Plan</span>
+          <span class="mode-pill">Execute</span>
+          &nbsp;&nbsp;
+          <span class="mode-pill">Week</span>
+          <span class="mode-pill active">Day</span>
+        </span>
+        <span class="dim">28 Mar 2026</span>
+      </div>
+      <div class="sep"></div>
+
+      <div style="margin-top:20px">
+        <div class="dim" style="font-size:11px; letter-spacing:1px; margin-bottom:8px">09:00</div>
+        <div class="border-left active">
+          <div style="display:flex; justify-content:space-between">
+            <span class="accent">09:00 – 11:00 &nbsp; Work 03/2026</span>
+            <span class="dim">96 / 120m</span>
+          </div>
+          <div style="margin-top:10px">
+            <div style="padding:3px 0"><span class="accent">&#9656;</span> <span class="accent">Review report</span> <span class="dim" style="float:right">~24m</span></div>
+            <div style="padding:3px 0"><span class="dim">&#9675;</span> Send email <span class="dim" style="float:right">~15m</span></div>
+            <div style="padding:3px 0" class="done"><span>&#10003;</span> Draft proposal <span style="float:right">~24m</span></div>
+            <div style="padding:3px 0"><span class="dim" style="font-style:italic">&middot; &middot; &middot; &nbsp;Break 12m</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="dim" style="font-size:11px; letter-spacing:1px; margin-bottom:8px">11:00</div>
+        <div class="border-left">
+          <div style="display:flex; justify-content:space-between">
+            <span class="dim">11:00 – 12:30 &nbsp; (unassigned)</span>
+            <span class="dim">0 / 90m</span>
+          </div>
+          <div style="margin-top:8px; color: #A8A29E; font-style:italic">
+            Press / to assign a task list
+          </div>
+        </div>
+      </div>
+
+      <div class="sep" style="margin-top:32px"></div>
+      <div class="dim" style="font-size:11.5px">&#8593;&#8595; navigate &nbsp;&middot;&nbsp; / assign &nbsp;&middot;&nbsp; &#9166; open &nbsp;&middot;&nbsp; tab mode &nbsp;&middot;&nbsp; ? help</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 2 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d2">
+  <div class="design-number">02</div>
+  <div class="design-header">
+    <div class="design-title">Solarised Garden</div>
+    <div class="design-desc">Warm Solarized Light palette with rounded box framing, inline progress bars, and dot leaders connecting tasks to times.</div>
+    <div class="design-tags">
+      <span class="tag">solarized</span>
+      <span class="tag">warm cream</span>
+      <span class="tag">progress bars</span>
+      <span class="tag">boxed layout</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">meadow — day view</div>
+    </div>
+    <div class="terminal-body">
+      <div class="box" style="display:flex; justify-content:space-between; align-items:center">
+        <span><span class="yellow">&#9728;</span> <strong>Sat 28 Mar 2026</strong> <span class="dots">&middot;</span> W13</span>
+        <span><span class="yellow">Plan</span> <span class="dots">&middot;</span> <span class="base" style="opacity:0.5">Execute</span> &nbsp;&nbsp; <span class="blue">Day</span> <span class="dots">&middot;</span> <span class="base" style="opacity:0.5">Week</span></span>
+      </div>
+
+      <div style="margin-top:20px">
+        <div class="base" style="font-size:12px; margin-bottom:6px">&mdash;&mdash; 09:00 &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</div>
+        <div style="padding-left:12px">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px">
+            <span><span class="yellow">&#9670;</span> <strong class="yellow">09:00 – 11:00</strong> &nbsp; Work 03/2026</span>
+            <span class="progress-bar"><span class="progress-fill">&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span><span class="progress-empty">&#9617;&#9617;</span></span>
+          </div>
+          <div style="padding:2px 0"><span class="yellow">&#9679;</span> Review report ~24m <span class="dots">........................</span> <span class="base" style="font-size:12px">09:00</span></div>
+          <div style="padding:2px 0"><span class="base" style="opacity:0.4">&#9675;</span> Send email ~15m <span class="dots">.............................</span> <span class="base" style="font-size:12px">09:24</span></div>
+          <div style="padding:2px 0"><span class="green">&#10003;</span> Draft proposal ~24m <span class="dots">........................</span> <span class="base" style="font-size:12px">09:39</span></div>
+          <div style="padding:2px 0; font-style:italic; opacity:0.6">&#8961; Break 12m</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="base" style="font-size:12px; margin-bottom:6px">&mdash;&mdash; 11:00 &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</div>
+        <div style="padding-left:12px">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px">
+            <span><span class="blue">&#9671;</span> <span class="blue">11:00 – 12:30</span> &nbsp; (unassigned)</span>
+            <span class="progress-bar"><span class="progress-empty">&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;</span></span>
+          </div>
+          <div style="color:#93A1A1; font-style:italic">/ to assign</div>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:24px; font-size:12px; color:#93A1A1">
+        &#8593;&#8595; select &nbsp;&nbsp; / assign &nbsp;&nbsp; &#9166; open &nbsp;&nbsp; &#8677; mode &nbsp;&nbsp; ? help
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 3 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d3">
+  <div class="design-number">03</div>
+  <div class="design-header">
+    <div class="design-title">Kanban Cards</div>
+    <div class="design-desc">Card-based layout inspired by Trello and Notion. Each timebox is a floating card with progress bars, dot indicators, and soft shadows.</div>
+    <div class="design-tags">
+      <span class="tag">cards</span>
+      <span class="tag">purple accent</span>
+      <span class="tag">modern</span>
+      <span class="tag">notion-like</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">meadow — day view</div>
+    </div>
+    <div class="terminal-body">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; font-size:13px;">
+        <span style="font-weight:600; color:#18181B">Meadow <span style="color:#A1A1AA; font-weight:400">&middot; Sat 28 Mar &middot; W13</span></span>
+        <span style="display:flex; gap:4px">
+          <span style="padding:3px 10px; background:#7C3AED; color:#FFF; border-radius:6px; font-size:11px; font-weight:600">Plan</span>
+          <span style="padding:3px 10px; color:#A1A1AA; font-size:11px; font-weight:600">Execute</span>
+          &nbsp;
+          <span style="padding:3px 10px; background:#7C3AED; color:#FFF; border-radius:6px; font-size:11px; font-weight:600">Day</span>
+          <span style="padding:3px 10px; color:#A1A1AA; font-size:11px; font-weight:600">Week</span>
+        </span>
+      </div>
+      <div class="cards">
+        <div class="card active">
+          <div class="card-title">
+            <span>09:00 – 11:00 &nbsp; Work 03/2026</span>
+            <span class="badge badge-active">active</span>
+          </div>
+          <div class="task-item"><span class="dot dot-current"></span> <span style="font-weight:500">Review report</span> <span style="color:#A1A1AA; margin-left:auto">~24m</span></div>
+          <div class="task-item"><span class="dot dot-pending"></span> Send email <span style="color:#A1A1AA; margin-left:auto">~15m</span></div>
+          <div class="task-item" style="color:#A1A1AA"><span class="dot dot-done"></span> <s>Draft proposal</s> <span style="margin-left:auto">~24m</span></div>
+          <div class="card-progress"><div class="card-progress-fill" style="width:33%"></div></div>
+          <div class="card-footer">
+            <span>3 tasks</span>
+            <span>96m / 120m</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <span>11:00 – 12:30</span>
+            <span class="badge badge-empty">unassigned</span>
+          </div>
+          <div style="color:#A1A1AA; font-size:12px; padding:20px 0; text-align:center">
+            <div style="font-size:24px; margin-bottom:8px; opacity:0.3">&#9776;</div>
+            Press <span style="padding:1px 6px; border:1px solid #E4E4E7; border-radius:4px; font-size:11px">/</span> to assign a task list
+          </div>
+          <div class="card-progress"><div class="card-progress-fill" style="width:0%"></div></div>
+          <div class="card-footer">
+            <span>0 tasks</span>
+            <span>0m / 90m</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:16px; font-size:11px; color:#A1A1AA; text-align:center">
+        &#8593;&#8595; select &nbsp;&middot;&nbsp; / assign &nbsp;&middot;&nbsp; &#9166; open &nbsp;&middot;&nbsp; tab mode &nbsp;&middot;&nbsp; ? help
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 4 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d4">
+  <div class="design-number">04</div>
+  <div class="design-header">
+    <div class="design-title">Brutalist</div>
+    <div class="design-desc">Raw, high-contrast, no-nonsense. Black and white with red for urgency. Heavy borders, uppercase labels, industrial feel.</div>
+    <div class="design-tags">
+      <span class="tag">brutalist</span>
+      <span class="tag">high contrast</span>
+      <span class="tag">industrial</span>
+      <span class="tag">bold</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">MEADOW</div>
+    </div>
+    <div class="terminal-body">
+      <div class="block-header">
+        <span>MEADOW // TASK MANAGER</span>
+        <span>SAT 28 MAR 2026 // W13</span>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-bottom:20px">
+        <span style="background:#000; color:#FFF; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:1px">PLAN</span>
+        <span style="border:1px solid #000; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:1px; color:#999">EXECUTE</span>
+        <span style="margin-left:12px; background:#000; color:#FFF; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:1px">DAY</span>
+        <span style="border:1px solid #000; padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:1px; color:#999">WEEK</span>
+      </div>
+
+      <div class="time-block selected">
+        <div class="time-block-header">
+          <span><span class="red">[09:00–11:00]</span> WORK 03/2026</span>
+          <span>96/120M</span>
+        </div>
+        <div class="task-row"><span class="marker marker-active">&#9654;</span> <strong>Review report</strong> — 24m</div>
+        <div class="task-row"><span class="marker marker-pending">&#9675;</span> Send email — 15m</div>
+        <div class="task-row strike"><span class="marker marker-done">&#10005;</span> Draft proposal — 24m</div>
+        <div class="task-row" style="color:#999; font-style:italic">--- BREAK 12M ---</div>
+      </div>
+
+      <div class="time-block">
+        <div class="time-block-header">
+          <span>[11:00–12:30] UNASSIGNED</span>
+          <span>0/90M</span>
+        </div>
+        <div class="task-row" style="color:#999">TYPE / TO ASSIGN</div>
+      </div>
+
+      <div class="footer-bar">
+        &#8593;&#8595; NAV &nbsp;/ ASSIGN &nbsp;&#9166; OPEN &nbsp;TAB MODE &nbsp;? HELP
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 5 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d5">
+  <div class="design-number">05</div>
+  <div class="design-header">
+    <div class="design-title">Meadow Green</div>
+    <div class="design-desc">True to the name — a lush green palette evoking a meadow. White cards float on a green-tinted background with rounded corners and gentle shadows.</div>
+    <div class="design-tags">
+      <span class="tag">nature</span>
+      <span class="tag">green palette</span>
+      <span class="tag">cards on green</span>
+      <span class="tag">organic</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">meadow — day view</div>
+    </div>
+    <div class="terminal-body">
+      <div class="header-bar">
+        <span style="font-size:14px">&#127793; Meadow</span>
+        <span>
+          <span class="pill pill-active">Plan</span>
+          <span class="pill pill-inactive">Execute</span>
+          &nbsp;
+          <span class="pill pill-active">Day</span>
+          <span class="pill pill-inactive">Week</span>
+        </span>
+        <span style="font-size:12px; opacity:0.8">Sat 28 Mar &middot; W13</span>
+      </div>
+
+      <div class="timebox">
+        <div class="timebox-header">
+          <span>09:00 – 11:00 &nbsp; Work 03/2026</span>
+          <span style="display:flex; align-items:center; gap:8px; font-size:12px">
+            <span class="progress"><span class="progress-inner" style="width:80%"></span></span>
+            96/120m
+          </span>
+        </div>
+        <div class="task task-active"><span class="icon">&#9656;</span> Review report <span style="float:right; opacity:0.5">~24m</span></div>
+        <div class="task"><span class="icon" style="opacity:0.3">&#9675;</span> Send email <span style="float:right; opacity:0.5">~15m</span></div>
+        <div class="task task-done"><span class="icon">&#10003;</span> Draft proposal <span style="float:right; opacity:0.5">~24m</span></div>
+        <div class="task" style="font-style:italic; opacity:0.5"><span class="icon">&#9900;</span> Break 12m</div>
+      </div>
+
+      <div class="timebox unassigned">
+        <div class="timebox-header" style="color:#7CB342">
+          <span>11:00 – 12:30 &nbsp; (unassigned)</span>
+          <span style="display:flex; align-items:center; gap:8px; font-size:12px">
+            <span class="progress"><span class="progress-inner" style="width:0%"></span></span>
+            0/90m
+          </span>
+        </div>
+        <div class="task" style="font-style:italic; opacity:0.5">Press / to assign a task list</div>
+      </div>
+
+      <div class="footer">&#8593;&#8595; navigate &nbsp;&middot;&nbsp; / assign &nbsp;&middot;&nbsp; &#9166; open &nbsp;&middot;&nbsp; tab mode &nbsp;&middot;&nbsp; ? help</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 6 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d6">
+  <div class="design-number">06</div>
+  <div class="design-header">
+    <div class="design-title">Blueprint</div>
+    <div class="design-desc">Architectural blueprint aesthetic with a grid background, timeline nodes, and blue monochrome palette. Data visualised as a vertical timeline.</div>
+    <div class="design-tags">
+      <span class="tag">blueprint</span>
+      <span class="tag">timeline</span>
+      <span class="tag">blue mono</span>
+      <span class="tag">architectural</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">meadow — blueprint</div>
+    </div>
+    <div class="terminal-body">
+      <div class="blueprint-header">
+        <span class="blueprint-title">Meadow</span>
+        <span class="blueprint-date">Sat 28 Mar 2026 &middot; W13</span>
+      </div>
+
+      <div class="mode-tabs">
+        <div class="mode-tab active">Plan</div>
+        <div class="mode-tab">Execute</div>
+        <div class="mode-tab" style="margin-left:12px; border-radius:4px 0 0 4px">Week</div>
+        <div class="mode-tab active" style="border-radius:0 4px 4px 0">Day</div>
+      </div>
+
+      <div class="timeline">
+        <div class="time-node">
+          <div class="time-dot"></div>
+          <div class="time-label">09:00</div>
+          <div class="node-content">
+            <div class="node-title">09:00 – 11:00 &nbsp; Work 03/2026 <span style="float:right; font-weight:400; color:#60A5FA; font-size:12px">96/120m</span></div>
+            <div class="node-task"><span class="check">&#9654;</span> Review report ~24m</div>
+            <div class="node-task"><span style="color:#93C5FD">&#9675;</span> Send email ~15m</div>
+            <div class="node-task"><span class="check">&#10003;</span> <span style="color:#94A3B8; text-decoration:line-through">Draft proposal ~24m</span></div>
+            <div class="node-task" style="color:#94A3B8; font-style:italic">&#9652; Break 12m</div>
+          </div>
+        </div>
+
+        <div class="time-node">
+          <div class="time-dot empty"></div>
+          <div class="time-label">11:00</div>
+          <div class="node-content" style="border-style:dashed">
+            <div class="node-title" style="color:#60A5FA">11:00 – 12:30 &nbsp; (unassigned) <span style="float:right; font-weight:400; font-size:12px">0/90m</span></div>
+            <div class="node-task" style="color:#94A3B8; font-style:italic">Press / to assign a task list</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px; color:#93C5FD; font-size:11px; border-top:1px solid #BFDBFE; padding-top:10px">
+        &#8593;&#8595; select &nbsp;&nbsp; / assign &nbsp;&nbsp; &#9166; open &nbsp;&nbsp; &#8677; mode &nbsp;&nbsp; ? help
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 7 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d7">
+  <div class="design-number">07</div>
+  <div class="design-header">
+    <div class="design-title">Sunset Warm</div>
+    <div class="design-desc">Warm orange and amber tones with a gentle gradient background. Dashed separators, rounded pills, and a cosy afternoon feel.</div>
+    <div class="design-tags">
+      <span class="tag">warm</span>
+      <span class="tag">orange palette</span>
+      <span class="tag">gradient bg</span>
+      <span class="tag">cosy</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">meadow — sunset</div>
+    </div>
+    <div class="terminal-body">
+      <div class="sunset-header">
+        <span class="app-name">meadow<span>bubbletea</span></span>
+        <div class="nav-pills">
+          <span class="nav-pill active">Plan</span>
+          <span class="nav-pill">Execute</span>
+          <span style="margin:0 6px; color:#FDBA74">|</span>
+          <span class="nav-pill active">Day</span>
+          <span class="nav-pill">Week</span>
+        </div>
+      </div>
+
+      <div class="day-title">
+        <span>Sat 28 Mar 2026 &middot; W13</span>
+        <span class="line"></span>
+      </div>
+
+      <div class="tb">
+        <div class="tb-header">
+          <span><span class="tb-time">09:00 – 11:00</span> &nbsp; Work 03/2026</span>
+          <span style="color:#EA580C">96/120m</span>
+        </div>
+        <div class="tb-task current"><span class="tb-marker">&#9656;</span> Review report <span style="float:right; opacity:0.4">~24m</span></div>
+        <div class="tb-task"><span class="tb-marker" style="color:#D4A574">&#9675;</span> Send email <span style="float:right; opacity:0.4">~15m</span></div>
+        <div class="tb-task done"><span class="tb-marker">&#10003;</span> Draft proposal <span style="float:right">~24m</span></div>
+        <div class="tb-break"><span class="tb-marker">&#9900;</span> Break 12m</div>
+      </div>
+
+      <div class="tb">
+        <div class="tb-header">
+          <span><span class="tb-time" style="opacity:0.5">11:00 – 12:30</span> &nbsp; <span style="color:#D4A574">(unassigned)</span></span>
+          <span style="color:#D4A574">0/90m</span>
+        </div>
+        <div class="tb-task" style="color:#D4A574; font-style:italic; padding-left:16px">Press / to assign a task list</div>
+      </div>
+
+      <div class="help-row">&#8593;&#8595; navigate &nbsp;&middot;&nbsp; / assign &nbsp;&middot;&nbsp; &#9166; open &nbsp;&middot;&nbsp; tab mode &nbsp;&middot;&nbsp; ? help</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 8 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d8">
+  <div class="design-number">08</div>
+  <div class="design-header">
+    <div class="design-title">Monochrome Zen</div>
+    <div class="design-desc">Ultra-minimal with no colour at all. Thin type weights, centred header, subtle left borders, maximum whitespace. Calm and focused.</div>
+    <div class="design-tags">
+      <span class="tag">monochrome</span>
+      <span class="tag">ultra-minimal</span>
+      <span class="tag">zen</span>
+      <span class="tag">thin weights</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">meadow</div>
+    </div>
+    <div class="terminal-body">
+      <div class="zen-header">
+        <div class="zen-title">M E A D O W</div>
+        <div class="zen-date">Saturday, 28 March 2026</div>
+        <div class="zen-modes">
+          <span class="zen-mode active">Plan</span>
+          <span class="zen-mode">&middot;</span>
+          <span class="zen-mode">Execute</span>
+          <span style="margin:0 12px; color:#DDD">|</span>
+          <span class="zen-mode">Week</span>
+          <span class="zen-mode">&middot;</span>
+          <span class="zen-mode active">Day</span>
+        </div>
+      </div>
+
+      <div class="zen-block">
+        <div class="zen-time">09 : 00</div>
+        <div class="zen-timebox active">
+          <div class="zen-tb-title">09:00 – 11:00 &nbsp; Work 03/2026 <span style="float:right; font-weight:300; color:#BBB">96 / 120m</span></div>
+          <div class="zen-task active"><span class="zen-marker">&#9656;</span> Review report <span style="float:right; color:#BBB; font-weight:300">~24m</span></div>
+          <div class="zen-task"><span class="zen-marker" style="color:#CCC">&#9675;</span> Send email <span style="float:right; color:#CCC; font-weight:300">~15m</span></div>
+          <div class="zen-task done"><span class="zen-marker">&#10003;</span> Draft proposal <span style="float:right; font-weight:300">~24m</span></div>
+          <div class="zen-task" style="font-style:italic; color:#CCC"><span class="zen-marker">&middot;</span> Break 12m</div>
+        </div>
+      </div>
+
+      <div class="zen-block">
+        <div class="zen-time">11 : 00</div>
+        <div class="zen-timebox">
+          <div class="zen-tb-title" style="color:#BBB">11:00 – 12:30 &nbsp; (unassigned) <span style="float:right; font-weight:300">0 / 90m</span></div>
+          <div class="zen-task" style="color:#CCC; font-style:italic">Press / to assign a task list</div>
+        </div>
+      </div>
+
+      <div class="zen-footer">&#8593;&#8595; &nbsp; / &nbsp; &#9166; &nbsp; tab &nbsp; ?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 9 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d9">
+  <div class="design-number">09</div>
+  <div class="design-header">
+    <div class="design-title">Retro Terminal</div>
+    <div class="design-desc">CRT-inspired with scan lines, ASCII art header, command-prompt style interactions. Red and navy accents on ivory. Blinking cursor.</div>
+    <div class="design-tags">
+      <span class="tag">retro</span>
+      <span class="tag">CRT vibes</span>
+      <span class="tag">ASCII art</span>
+      <span class="tag">command-line</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">MEADOW v1.0</div>
+    </div>
+    <div class="terminal-body">
+      <div class="retro-header">
+        <pre class="retro-ascii">
+ _____ _____ _____ ____  _____ _ _ _
+|     |   __|  _  |    \|     | | | |
+| | | |   __|     |  |  |  |  | | | |
+|_|_|_|_____|__|__|____/|_____|_____|</pre>
+        <div class="retro-info"><span class="prompt">system&gt;</span> Task manager initialised</div>
+        <div class="retro-info"><span class="prompt">date&gt;</span> Sat 28 Mar 2026 &middot; Week 13</div>
+        <div class="retro-info"><span class="prompt">mode&gt;</span> PLAN &middot; DAY VIEW</div>
+      </div>
+
+      <div class="retro-sep">════════════════════════════════════════════════════════════</div>
+
+      <div class="retro-section">
+        <div class="retro-section-title">&#9608; Timebox 1 &mdash; 09:00 to 11:00 &mdash; Work 03/2026 [96/120m]</div>
+        <div class="retro-row"><span class="retro-current">  &#9654; 09:00</span> Review report ............ ~24m</div>
+        <div class="retro-row"><span class="retro-pending">  &#9675; 09:24</span> Send email ............... ~15m</div>
+        <div class="retro-row"><span class="retro-done">  &#10003; 09:39</span> Draft proposal ........... ~24m</div>
+        <div class="retro-row" style="color:#999">  &#9644; ----  Break .................. 12m</div>
+      </div>
+
+      <div class="retro-section">
+        <div class="retro-section-title" style="color:#268BD2">&#9617; Timebox 2 &mdash; 11:00 to 12:30 &mdash; unassigned [0/90m]</div>
+        <div class="retro-row" style="color:#999">  Type <span style="color:#E94560">/</span> to assign a task list</div>
+      </div>
+
+      <div class="retro-sep">════════════════════════════════════════════════════════════</div>
+
+      <div style="margin-top:4px; font-size:12px">
+        <span class="prompt">cmd&gt;</span> <span class="retro-cursor">&nbsp;</span>
+        <span style="color:#999; font-size:11px; margin-left:16px">&#8593;&#8595; nav &middot; / assign &middot; &#9166; open &middot; tab mode &middot; ? help</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- DESIGN 10 -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="design-card" id="d10">
+  <div class="design-number">10</div>
+  <div class="design-header">
+    <div class="design-title">Lavender Haze</div>
+    <div class="design-desc">Soft purple gradient with glassmorphic cards, glowing dot indicators, and a dreamy pastel palette. Refined and modern.</div>
+    <div class="design-tags">
+      <span class="tag">pastel</span>
+      <span class="tag">lavender</span>
+      <span class="tag">glassmorphic</span>
+      <span class="tag">dreamy</span>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-title">meadow — lavender</div>
+    </div>
+    <div class="terminal-body">
+      <div class="lav-header">
+        <div>
+          <span class="lav-logo">meadow<span>bubbletea</span></span>
+        </div>
+        <div class="lav-pills">
+          <span class="lav-pill active">Plan</span>
+          <span class="lav-pill">Execute</span>
+          &nbsp;
+          <span class="lav-pill active">Day</span>
+          <span class="lav-pill">Week</span>
+        </div>
+        <div class="lav-date">Sat 28 Mar &middot; W13</div>
+      </div>
+
+      <div class="lav-section">
+        <div class="lav-time-marker">
+          <span class="lav-time-text">09:00</span>
+          <span class="lav-time-line"></span>
+        </div>
+        <div class="lav-box active">
+          <div class="lav-box-title">
+            <span>09:00 – 11:00 &nbsp; Work 03/2026</span>
+            <span style="font-weight:400; color:#A78BFA; font-size:12px">96/120m</span>
+          </div>
+          <div class="lav-task current"><span class="lav-marker lav-marker-current"></span> Review report <span style="margin-left:auto; opacity:0.4">~24m</span></div>
+          <div class="lav-task"><span class="lav-marker lav-marker-pending"></span> Send email <span style="margin-left:auto; opacity:0.4">~15m</span></div>
+          <div class="lav-task done"><span class="lav-marker lav-marker-done"></span> Draft proposal <span style="margin-left:auto">~24m</span></div>
+          <div class="lav-task" style="color:#C4B5FD; font-style:italic; font-size:12px"><span class="lav-marker" style="background:none"></span> &middot; Break 12m</div>
+          <div class="lav-progress"><div class="lav-progress-fill" style="width:80%"></div></div>
+        </div>
+      </div>
+
+      <div class="lav-section">
+        <div class="lav-time-marker">
+          <span class="lav-time-text">11:00</span>
+          <span class="lav-time-line"></span>
+        </div>
+        <div class="lav-box" style="border-style:dashed">
+          <div class="lav-box-title" style="color:#A78BFA">
+            <span>11:00 – 12:30 &nbsp; (unassigned)</span>
+            <span style="font-weight:400; font-size:12px">0/90m</span>
+          </div>
+          <div class="lav-task" style="color:#C4B5FD; font-style:italic">Press / to assign a task list</div>
+          <div class="lav-progress"><div class="lav-progress-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="lav-footer">&#8593;&#8595; select &nbsp;&middot;&nbsp; / assign &nbsp;&middot;&nbsp; &#9166; open &nbsp;&middot;&nbsp; tab mode &nbsp;&middot;&nbsp; ? help</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
